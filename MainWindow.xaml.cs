@@ -26,7 +26,7 @@ namespace HeartRateMonitorVRC
         private static OSC osc;
 
         private static int lastSentBpm = 0;
-        private static int currentBpm = 60;
+        private static int currentBpm = 0;
 
         private static DeviceInformationCollection pairedDevices;
 
@@ -38,18 +38,17 @@ namespace HeartRateMonitorVRC
             SelectDeviceButton.IsEnabled = false;
 
             ScanForDevicesAsync();
-            UpdateBPMText();
             EmulateBeatEffect();
         }
 
-        private async void UpdateBPMText()
+        private void DisplayStatus(string text)
         {
-            while (true)
-            {
-                BPMText.Text = $"{currentBpm} BPM";
+            Trace.WriteLine(text);
 
-                await Task.Delay(100);
-            }
+            StatusText.Dispatcher.Invoke(new Action(() =>
+            {
+                StatusText.Text = text;
+            }));
         }
 
         private async void EmulateBeatEffect()
@@ -60,11 +59,11 @@ namespace HeartRateMonitorVRC
 
                 if (ShouldEmulateBeatEffect())
                 {
-                    var showAnim = new DoubleAnimation();
-                    showAnim.From = 1;
-                    showAnim.To = .25f;
-                    showAnim.Duration = TimeSpan.FromMilliseconds(nextBeat);
-                    BPMText.BeginAnimation(OpacityProperty, showAnim);
+                    var beatEffect = new DoubleAnimation();
+                    beatEffect.From = 1;
+                    beatEffect.To = .25f;
+                    beatEffect.Duration = TimeSpan.FromMilliseconds(nextBeat);
+                    BPMText.BeginAnimation(OpacityProperty, beatEffect);
 
                     osc.Send("/avatar/parameters/isHRBeat", true);
                     nextBeat -= 50;
@@ -83,100 +82,14 @@ namespace HeartRateMonitorVRC
             return osc != null && hrDevice != null && hrGatt != null;
         }
 
-        private void Debug(string text, bool ignoreStatus = false)
-        {
-            Trace.WriteLine(text);
-
-            StatusText.Dispatcher.Invoke(new Action(() =>
-            {
-                StatusText.Text = text;
-            }));
-        }
-
         private async void ScanForDevicesAsync()
         {
-            Debug("Scanning");
+            DisplayStatus("Scanning");
             var deviceSelector = BluetoothLEDevice.GetDeviceSelector();
             pairedDevices = await DeviceInformation.FindAllAsync(deviceSelector);
 
-            Debug("Scan complete, please select device");
+            DisplayStatus("Scan complete, please select device");
             SelectDeviceButton.IsEnabled = true;
-        }
-
-        private async Task<BluetoothLEDevice> ConnectToDeviceAsync(string deviceId)
-        {
-            var device = await BluetoothLEDevice.FromIdAsync(deviceId);
-            if (device == null)
-            {
-                Debug("Failed connecting to device.");
-                return null;
-            }
-            
-            device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
-
-            Debug($"Connected to: {device.Name}");
-            return device;
-        }
-
-        private async void Device_ConnectionStatusChanged(BluetoothLEDevice sender, object args)
-        {
-            if (sender.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
-            {
-                Debug("Device disconnected. Reconnecting...", true);
-
-                await TryPairWithDevice(hrDeviceInfo, true);
-            }
-        }
-
-        private async Task<GattCharacteristic> GetHeartRateCharacteristicAsync(BluetoothLEDevice device, bool reconnecting = false)
-        {
-            var heartRateServiceUuid = GattServiceUuids.HeartRate;
-            var heartRateMeasurementCharacteristicUuid = GattCharacteristicUuids.HeartRateMeasurement;
-
-            var servicesResult = await device.GetGattServicesForUuidAsync(heartRateServiceUuid);
-            if (servicesResult.Status != GattCommunicationStatus.Success || servicesResult.Services.Count == 0)
-            {
-                Debug("Failed getting HR service.");
-                return null;
-            }
-
-            var service = servicesResult.Services[0];
-
-            var characteristicsResult = await service.GetCharacteristicsForUuidAsync(heartRateMeasurementCharacteristicUuid);
-            if (characteristicsResult.Status != GattCommunicationStatus.Success || characteristicsResult.Characteristics.Count == 0)
-            {
-                Debug("Unable to get characteristics.");
-
-                if (reconnecting)
-                {
-                    await Task.Delay(1000);
-
-                    await TryPairWithDevice(hrDeviceInfo);
-                }
-
-                return null;
-            }
-
-            return characteristicsResult.Characteristics[0];
-        }
-
-        private async Task<bool> SubscribeToHeartRateNotificationsAsync(GattCharacteristic characteristic)
-        {
-            characteristic.ValueChanged += Characteristic_ValueChanged;
-
-            var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                GattClientCharacteristicConfigurationDescriptorValue.Notify);
-
-            if (status == GattCommunicationStatus.Success)
-            {
-                Debug("Subscribed to HR notifications.");
-            }
-            else
-            {
-                Debug("Failed subscribing to HR notifications.");
-            }
-
-            return status == GattCommunicationStatus.Success;
         }
 
         private void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
@@ -184,12 +97,35 @@ namespace HeartRateMonitorVRC
             var data = args.CharacteristicValue.ToArray();
             int heartRate = ParseHeartRate(data);
 
-            lock (this)
+            currentBpm = heartRate;
+            BPMText.Dispatcher.Invoke(new Action(() =>
             {
-                currentBpm = heartRate;
-            }
+                BPMText.Text = $"{currentBpm} BPM";
+            }));
 
             SendBPMToVRChat(heartRate);
+        }
+
+        private int ParseHeartRate(byte[] data)
+        {
+            if (data == null || data.Length == 0)
+                return 0;
+
+            // Flags byte
+            var flags = data[0];
+
+            // Heart Rate Measurement value (2 bytes)
+            int heartRate = 0;
+            if ((flags & 0x01) == 0) // Heart Rate Measurement value is 1 byte
+            {
+                heartRate = data[1];
+            }
+            else // Heart Rate Measurement value is 2 bytes
+            {
+                heartRate = BitConverter.ToUInt16(data, 1);
+            }
+
+            return heartRate;
         }
 
         private void SendBPMToVRChat(int bpm)
@@ -221,28 +157,6 @@ namespace HeartRateMonitorVRC
             // Sending it all the time in case if avatar was changed and it should receive new data
             osc.Send("/avatar/parameters/isHRConnected", true);
             osc.Send("/avatar/parameters/isHRActive", true);
-        }
-
-        private int ParseHeartRate(byte[] data)
-        {
-            if (data == null || data.Length == 0)
-                return 0;
-
-            // Flags byte
-            var flags = data[0];
-
-            // Heart Rate Measurement value (2 bytes)
-            int heartRate = 0;
-            if ((flags & 0x01) == 0) // Heart Rate Measurement value is 1 byte
-            {
-                heartRate = data[1];
-            }
-            else // Heart Rate Measurement value is 2 bytes
-            {
-                heartRate = BitConverter.ToUInt16(data, 1);
-            }
-
-            return heartRate;
         }
 
         public static float Remap(float input, float inputStart, float inputEnd, float outputStart, float outputEnd)
@@ -326,6 +240,82 @@ namespace HeartRateMonitorVRC
 
             hrDeviceInfo = device;
             return success;
+        }
+
+        private async Task<BluetoothLEDevice> ConnectToDeviceAsync(string deviceId)
+        {
+            var device = await BluetoothLEDevice.FromIdAsync(deviceId);
+            if (device == null)
+            {
+                DisplayStatus("Failed connecting to device.");
+                return null;
+            }
+
+            device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
+
+            DisplayStatus($"Connected to: {device.Name}");
+            return device;
+        }
+
+        private async void Device_ConnectionStatusChanged(BluetoothLEDevice sender, object args)
+        {
+            if (sender.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
+            {
+                DisplayStatus("Device disconnected. Reconnecting...");
+
+                await TryPairWithDevice(hrDeviceInfo, true);
+            }
+        }
+
+        private async Task<GattCharacteristic> GetHeartRateCharacteristicAsync(BluetoothLEDevice device, bool reconnecting = false)
+        {
+            var heartRateServiceUuid = GattServiceUuids.HeartRate;
+            var heartRateMeasurementCharacteristicUuid = GattCharacteristicUuids.HeartRateMeasurement;
+
+            var servicesResult = await device.GetGattServicesForUuidAsync(heartRateServiceUuid);
+            if (servicesResult.Status != GattCommunicationStatus.Success || servicesResult.Services.Count == 0)
+            {
+                DisplayStatus("Failed getting HR service.");
+                return null;
+            }
+
+            var service = servicesResult.Services[0];
+
+            var characteristicsResult = await service.GetCharacteristicsForUuidAsync(heartRateMeasurementCharacteristicUuid);
+            if (characteristicsResult.Status != GattCommunicationStatus.Success || characteristicsResult.Characteristics.Count == 0)
+            {
+                DisplayStatus("Unable to get characteristics.");
+
+                if (reconnecting)
+                {
+                    await Task.Delay(1000);
+
+                    await TryPairWithDevice(hrDeviceInfo);
+                }
+
+                return null;
+            }
+
+            return characteristicsResult.Characteristics[0];
+        }
+
+        private async Task<bool> SubscribeToHeartRateNotificationsAsync(GattCharacteristic characteristic)
+        {
+            characteristic.ValueChanged += Characteristic_ValueChanged;
+
+            var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                GattClientCharacteristicConfigurationDescriptorValue.Notify);
+
+            if (status == GattCommunicationStatus.Success)
+            {
+                DisplayStatus("Subscribed to HR notifications.");
+            }
+            else
+            {
+                DisplayStatus("Failed subscribing to HR notifications.");
+            }
+
+            return status == GattCommunicationStatus.Success;
         }
 
         private void ElementFadeInOut(UIElement element, Fade fade, int fadeTimeMilliseconds = 500)
