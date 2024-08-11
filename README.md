@@ -36,3 +36,8 @@ HeartRateMonitor sends OSC messages to VRChat port (9000) using parameters from 
 | /avatar/parameters/FullHRPercent | float | `-1`-`1` | Other converted range of HR |
 | /avatar/parameters/HR | int | `0`-`255` | Exact HR value |
 | /avatar/parameters/Heartrate2  | float | `0`-`1` | Converted range of HR |
+
+## Building
+To build the project you need to manually include Windows.winmd and System.Runtime.WindowsRuntime.dll in the project, which may be located here:
+- C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd (Also shipped in Release)
+- C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll
