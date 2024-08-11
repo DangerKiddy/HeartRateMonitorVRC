@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -63,7 +64,7 @@ namespace HeartRateMonitorVRC
                     beatEffect.From = 1;
                     beatEffect.To = .25f;
                     beatEffect.Duration = TimeSpan.FromMilliseconds(nextBeat);
-                    BPMText.BeginAnimation(OpacityProperty, beatEffect);
+                    HeartIcon.BeginAnimation(OpacityProperty, beatEffect);
 
                     osc.Send("/avatar/parameters/isHRBeat", true);
                     nextBeat -= 50;
@@ -100,7 +101,13 @@ namespace HeartRateMonitorVRC
             currentBpm = heartRate;
             BPMText.Dispatcher.Invoke(new Action(() =>
             {
-                BPMText.Text = $"{currentBpm} BPM";
+                string zeros = "";
+                for (int i = 0; i < 3 - currentBpm.ToString().Length; i++)
+                {
+                    zeros += '0';
+                }
+
+                BPMText.Text = $"{zeros}{currentBpm}";
             }));
 
             SendBPMToVRChat(heartRate);
@@ -166,9 +173,6 @@ namespace HeartRateMonitorVRC
 
         private void Retry_Click(object sender, RoutedEventArgs e)
         {
-            ElementFadeInOut(BPMText, Fade.Out);
-            ElementFadeInOut(SelectDeviceButton, Fade.In);
-
             ScanForDevicesAsync();
         }
 
@@ -205,9 +209,6 @@ namespace HeartRateMonitorVRC
                 bool isSuccess = await TryPairWithDevice(device);
                 if (isSuccess)
                 {
-                    ElementFadeInOut(BPMText, Fade.In);
-                    ElementFadeInOut(SelectDeviceButton, Fade.Out);
-
                     SelectDeviceButton.IsEnabled = false;
                 }
                 else
@@ -325,6 +326,22 @@ namespace HeartRateMonitorVRC
             showAnim.To = fade == Fade.In ? 1 : 0;
             showAnim.Duration = TimeSpan.FromMilliseconds(fadeTimeMilliseconds);
             element.BeginAnimation(OpacityProperty, showAnim);
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
     }
 }

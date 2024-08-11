@@ -110,6 +110,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="heart.png" />
+    <Resource Include="icon.png" />
     <Content Include="SharpOSC.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

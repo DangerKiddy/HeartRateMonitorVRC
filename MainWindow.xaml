@@ -5,12 +5,129 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HeartRateMonitorVRC"
         mc:Ignorable="d"
-        Title="HeartRateMonitor" Height="105" Width="365" ResizeMode="NoResize">
+        MouseDown="Window_MouseDown"
+        Title="HeartRateMonitor" Height="153" Width="365" ResizeMode="NoResize" WindowStyle="None">
     <Grid Background="#FF2D2D2D">
-        <Button Content="Scan" IsEnabled="True" x:Name="ScanButton" Click="Retry_Click"  HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="46" RenderTransformOrigin="0.144,-3.095" Opacity="1"/>
-        <TextBlock HorizontalAlignment="Center" x:Name="StatusText" TextWrapping="Wrap" Text="Current status" VerticalAlignment="Top" Width="345" TextAlignment="Right" Margin="0,10,0,0" Height="20" Foreground="White"/>
-        <TextBlock HorizontalAlignment="Left" x:Name="BPMText" Margin="10,0,0,10" TextWrapping="Wrap" Text="0 BPM" VerticalAlignment="Bottom" Height="44" Width="164" Foreground="White" FontSize="36" Opacity="0"/>
-        <Button Content="Select device" IsEnabled="False" x:Name="SelectDeviceButton" Click="SelectDevice_Click" HorizontalAlignment="Center" Margin="0,35,0,0" VerticalAlignment="Top" Height="28" Width="103"/>
+        <Button Content="Scan" IsEnabled="True" x:Name="ScanButton" Click="Retry_Click"  HorizontalAlignment="Right" Margin="0,88,57,0" VerticalAlignment="Top" Width="46" RenderTransformOrigin="0.144,-3.095" Opacity="1"/>
+        <TextBlock HorizontalAlignment="Center" x:Name="StatusText" TextWrapping="Wrap" Text="Current status" VerticalAlignment="Top" Width="344" Margin="0,122,0,0" Height="20" Foreground="White"/>
+        <TextBlock HorizontalAlignment="Left" x:Name="BPMText" Margin="10,30,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="80" Width="134" Foreground="White" FontSize="72" Opacity="1" FontFamily="Unispace" TextAlignment="Right"/>
+        <Button Content="Select device" IsEnabled="False" x:Name="SelectDeviceButton" Click="SelectDevice_Click" HorizontalAlignment="Left" Margin="238,46,0,0" VerticalAlignment="Top" Height="28" Width="102"/>
+        <TextBlock HorizontalAlignment="Left" x:Name="BPMText_Копировать" Margin="150,78,0,0" TextWrapping="Wrap" Text="BPM" VerticalAlignment="Top" Height="30" Width="56" Foreground="White" FontSize="24" Opacity="1" FontFamily="Franklin Gothic Medium"/>
+        <Image x:Name="HeartIcon" HorizontalAlignment="Left" Height="30" Margin="160,46,0,0" VerticalAlignment="Top" Width="30" Source="/heart.png"/>
+        <Label Content="HeartRateMonitorVRC" HorizontalAlignment="Left" Margin="26,3,0,0" VerticalAlignment="Top" Foreground="White"/>
 
+        <Grid>
+            <Button 
+                Name="CloseButton"
+                Content="X" 
+                Click="CloseButton_Click"
+                Background="#00E91024"
+                Foreground="White"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Height="24" Width="49"
+                BorderThickness="0,0,0,0"
+                FontFamily="Corbel Light"
+                FontSize="18">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#00EA1023"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <Grid>
+                                            <Rectangle x:Name="BackgroundRect" Fill="#00EA1023"/>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation
+                                                Storyboard.TargetName="BackgroundRect"
+                                                Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"
+                                                To="#FFEA1023" Duration="0:0:0.1" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation
+                                                Storyboard.TargetName="BackgroundRect"
+                                                Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"
+                                                To="#00EA1023" Duration="0:0:0.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button 
+                Name="MinimizeButton"
+                Content="—" 
+                Click="MinimizeButton_Click" 
+                Margin="0,0,49,0"
+                Background="#00E91024"
+                Foreground="White"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Height="24" Width="49"
+                BorderThickness="0,0,0,0"
+                FontFamily="Corbel Light"
+                FontSize="18">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#003E3E3E"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <Grid>
+                                            <Rectangle x:Name="BackgroundRect" Fill="#003E3E3E"/>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation
+                                                Storyboard.TargetName="BackgroundRect"
+                                                Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"
+                                                To="#FF3E3E3E" Duration="0:0:0.1" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation
+                                                Storyboard.TargetName="BackgroundRect"
+                                                Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)"
+                                                To="#003E3E3E" Duration="0:0:0.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+        <Image HorizontalAlignment="Left" Height="25" Margin="4,4,0,0" VerticalAlignment="Top" Width="25" Source="/icon.png"/>
     </Grid>
 </Window>
