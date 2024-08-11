@@ -26,7 +26,7 @@ namespace HeartRateMonitorVRC
         private static OSC osc;
 
         private static int lastSentBpm = 0;
-        private static int currentBpm = 0;
+        private static int currentBpm = 60;
 
         private static DeviceInformationCollection pairedDevices;
 
@@ -34,13 +34,12 @@ namespace HeartRateMonitorVRC
         {
             InitializeComponent();
 
+            osc = new OSC();
             SelectDeviceButton.IsEnabled = false;
 
             ScanForDevicesAsync();
             UpdateBPMText();
             EmulateBeatEffect();
-
-            osc = new OSC();
         }
 
         private async void UpdateBPMText()
@@ -59,17 +58,29 @@ namespace HeartRateMonitorVRC
             {
                 var nextBeat = currentBpm == 0 ? 100 : (int)((1f / currentBpm) * 1000) * 60;
 
-                if (osc != null && hrDevice != null && hrGatt != null)
+                if (ShouldEmulateBeatEffect())
                 {
                     var showAnim = new DoubleAnimation();
                     showAnim.From = 1;
                     showAnim.To = .25f;
                     showAnim.Duration = TimeSpan.FromMilliseconds(nextBeat);
                     BPMText.BeginAnimation(OpacityProperty, showAnim);
+
+                    osc.Send("/avatar/parameters/isHRBeat", true);
+                    nextBeat -= 50;
+
+                    await Task.Delay(50);
+
+                    osc.Send("/avatar/parameters/isHRBeat", false);
                 }
 
                 await Task.Delay(nextBeat);
             }
+        }
+
+        private bool ShouldEmulateBeatEffect()
+        {
+            return osc != null && hrDevice != null && hrGatt != null;
         }
 
         private void Debug(string text, bool ignoreStatus = false)
@@ -100,7 +111,6 @@ namespace HeartRateMonitorVRC
                 Debug("Failed connecting to device.");
                 return null;
             }
-
             
             device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
 
@@ -190,27 +200,27 @@ namespace HeartRateMonitorVRC
             lastSentBpm = bpm;
 
             float hr01 = Remap(bpm, 0, 255, 0, 1);
-            osc.SendFloat("/avatar/parameters/Heartrate2", hr01);
-            osc.SendFloat("/avatar/parameters/HRPercent", hr01);
-            osc.SendFloat("/avatar/parameters/FullHRPercent", Remap(bpm, 0, 255, -1, 1));
-            osc.SendInt("/avatar/parameters/HR", bpm);
+            osc.Send("/avatar/parameters/Heartrate2", hr01);
+            osc.Send("/avatar/parameters/HRPercent", hr01);
+            osc.Send("/avatar/parameters/FullHRPercent", Remap(bpm, 0, 255, -1, 1));
+            osc.Send("/avatar/parameters/HR", bpm);
 
             string hrAsStr = bpm.ToString();
             if (bpm > 99)
             {
-                osc.SendInt("/avatar/parameters/onesHR", int.Parse(hrAsStr[2].ToString()));
-                osc.SendInt("/avatar/parameters/tensHR", int.Parse(hrAsStr[1].ToString()));
-                osc.SendInt("/avatar/parameters/hundredsHR", int.Parse(hrAsStr[0].ToString()));
+                osc.Send("/avatar/parameters/onesHR", int.Parse(hrAsStr[2].ToString()));
+                osc.Send("/avatar/parameters/tensHR", int.Parse(hrAsStr[1].ToString()));
+                osc.Send("/avatar/parameters/hundredsHR", int.Parse(hrAsStr[0].ToString()));
             }
             else
             {
-                osc.SendInt("/avatar/parameters/onesHR", int.Parse(hrAsStr[1].ToString()));
-                osc.SendInt("/avatar/parameters/tensHR", int.Parse(hrAsStr[0].ToString()));
+                osc.Send("/avatar/parameters/onesHR", int.Parse(hrAsStr[1].ToString()));
+                osc.Send("/avatar/parameters/tensHR", int.Parse(hrAsStr[0].ToString()));
             }
 
             // Sending it all the time in case if avatar was changed and it should receive new data
-            osc.SendBool("/avatar/parameters/isHRConnected", true);
-            osc.SendBool("/avatar/parameters/isHRActive", true);
+            osc.Send("/avatar/parameters/isHRConnected", true);
+            osc.Send("/avatar/parameters/isHRActive", true);
         }
 
         private int ParseHeartRate(byte[] data)
