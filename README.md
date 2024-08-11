@@ -1,4 +1,9 @@
 # HeartRateMonitorVRC
+![e1af8ed2bd59eea3e71613963807320a](https://github.com/user-attachments/assets/7edd955b-0d67-40cf-9ad3-17d99960ae6b)\
+![6c64df81b1fff43bbe6966cb85eb9ed0](https://github.com/user-attachments/assets/577995e1-a97d-467e-ba65-c2b7d6b1e7f7)
+
+Application for streaming heart rate info from pulseoximeter straight to VRChat without phone/web apps by using desktop Bluetooth and VRChat OSC
+
 ## Requirements
 - Pulseoximeter with BluetoothLE (Low energy) support, such as CooSpo H808S (Tested only with that device)
 - Bluetooth adapter on PC
