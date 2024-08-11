@@ -63,6 +63,7 @@ namespace HeartRateMonitorVRC
             udp.Send(finalBuffer, finalBuffer.Length, endPoint);
         }
 
+        // TODO: Fix byte alignment, since with specific addresses it aligns bytes wrong. Most likely happens to SendFloat and SendInt as well
         public void SendBool(string address, bool value)
         {
             var sendBack = address + '\0';
