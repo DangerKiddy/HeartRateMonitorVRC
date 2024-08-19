@@ -1,4 +1,9 @@
 # HeartRateMonitorVRC
+![e1af8ed2bd59eea3e71613963807320a](https://github.com/user-attachments/assets/7edd955b-0d67-40cf-9ad3-17d99960ae6b)\
+![6c64df81b1fff43bbe6966cb85eb9ed0](https://github.com/user-attachments/assets/577995e1-a97d-467e-ba65-c2b7d6b1e7f7)
+
+Application for streaming heart rate info from pulseoximeter straight to VRChat without phone/web apps by using desktop Bluetooth and VRChat OSC
+
 ## Requirements
 - Pulseoximeter with BluetoothLE (Low energy) support, such as CooSpo H808S (Tested only with that device)
 - Bluetooth adapter on PC
@@ -13,11 +18,12 @@
 \
 ![image](https://github.com/user-attachments/assets/b8689d3b-2438-49e4-b231-0220a1a053b8)
 5. Open HeartRateMonitorVRC\
-![image](https://github.com/user-attachments/assets/b64b3f9c-cca6-41e3-8105-46235420c03a)
+![image](https://github.com/user-attachments/assets/429bb415-a4cd-47a3-b802-13b7df5e4cb0)
+
 6. Press "Select device", choose your pulseoximeter and wait\
-![image](https://github.com/user-attachments/assets/cf787717-7837-4f8c-b624-cd1e9e6170dd)
+![image](https://github.com/user-attachments/assets/e4c47c26-4a51-465c-b12e-dda8529ad2ce)
 7. Wait until it says "Subscribed to HR notifications" and shows your BPM\
-![image](https://github.com/user-attachments/assets/ab695ab5-a95f-426d-b654-462d028a5fbb)
+![image](https://github.com/user-attachments/assets/8e7f610d-4455-40b9-81c0-a023e755df69)
 
 ## Troubleshooting
 ### Unable to get characteristics / Failed subcribing to HR notifications
