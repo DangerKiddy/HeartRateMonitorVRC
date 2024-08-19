@@ -67,9 +67,11 @@ namespace HeartRateMonitorVRC
                     HeartIcon.BeginAnimation(OpacityProperty, beatEffect);
 
                     osc.Send("/avatar/parameters/isHRBeat", true);
-                    nextBeat -= 50;
 
-                    await Task.Delay(50);
+                    var beatHalf = nextBeat / 3;
+                    nextBeat = nextBeat - beatHalf;
+
+                    await Task.Delay(beatHalf);
 
                     osc.Send("/avatar/parameters/isHRBeat", false);
                 }
@@ -236,7 +238,9 @@ namespace HeartRateMonitorVRC
             if (!success)
             {
                 hrGatt = null;
-                hrDevice.Dispose();
+
+                if (hrDevice != null)
+                    hrDevice.Dispose();
             }
 
             hrDeviceInfo = device;
@@ -264,8 +268,23 @@ namespace HeartRateMonitorVRC
             {
                 DisplayStatus("Device disconnected. Reconnecting...");
 
-                await TryPairWithDevice(hrDeviceInfo, true);
+                DisconnectDevice();
+                await Task.Delay(1000);
+
+                await RetryConnecting();
             }
+        }
+
+        private async Task RetryConnecting()
+        {
+            while (!await TryPairWithDevice(hrDeviceInfo, true))
+            {
+                DisplayStatus("Reconnection failed!. Trying again...");
+                DisconnectDevice();
+                await Task.Delay(1000);
+            }
+
+            DisplayStatus("Connection restored!");
         }
 
         private async Task<GattCharacteristic> GetHeartRateCharacteristicAsync(BluetoothLEDevice device, bool reconnecting = false)
@@ -286,13 +305,6 @@ namespace HeartRateMonitorVRC
             if (characteristicsResult.Status != GattCommunicationStatus.Success || characteristicsResult.Characteristics.Count == 0)
             {
                 DisplayStatus("Unable to get characteristics.");
-
-                if (reconnecting)
-                {
-                    await Task.Delay(1000);
-
-                    await TryPairWithDevice(hrDeviceInfo);
-                }
 
                 return null;
             }
@@ -326,6 +338,18 @@ namespace HeartRateMonitorVRC
             showAnim.To = fade == Fade.In ? 1 : 0;
             showAnim.Duration = TimeSpan.FromMilliseconds(fadeTimeMilliseconds);
             element.BeginAnimation(OpacityProperty, showAnim);
+        }
+
+        private void DisconnectDevice()
+        {
+            if (hrDevice == null)
+                return;
+
+            hrDevice.Dispose();
+            hrDevice = null;
+            hrGatt = null;
+
+            GC.Collect();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
