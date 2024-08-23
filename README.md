@@ -16,6 +16,9 @@ Application for streaming heart rate info from pulseoximeter straight to VRChat 
 3. Select "Bluetooth" and connect your pulseoximeter\
 ![image](https://github.com/user-attachments/assets/27b27978-246f-4d32-a929-4e5cc1329226)
 \
+For Windows 11 you must set Advanced bluetooth discovery\
+![image](https://github.com/user-attachments/assets/99cc838f-33c1-413e-bdb6-5b6bd0903a02)
+\
 ![image](https://github.com/user-attachments/assets/b8689d3b-2438-49e4-b231-0220a1a053b8)
 5. Open HeartRateMonitorVRC\
 ![image](https://github.com/user-attachments/assets/429bb415-a4cd-47a3-b802-13b7df5e4cb0)
