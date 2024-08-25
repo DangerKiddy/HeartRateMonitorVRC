@@ -258,7 +258,7 @@ namespace HeartRateMonitorVRC
 
             device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
 
-            DisplayStatus($"Connected to: {device.Name}");
+            DisplayStatus($"Attempting get HR characteristics of {device.Name}");
             return device;
         }
 
@@ -268,11 +268,19 @@ namespace HeartRateMonitorVRC
             {
                 DisplayStatus("Device disconnected. Reconnecting...");
 
-                DisconnectDevice();
-                await Task.Delay(1000);
+                BPMText.Dispatcher.Invoke(new Action(() =>
+                {
+                    DisconnectDevice();
 
-                await RetryConnecting();
+                    RequireReconnect();
+                }));
             }
+        }
+
+        private async void RequireReconnect()
+        {
+            await Task.Delay(1000);
+            await RetryConnecting();
         }
 
         private async Task RetryConnecting()
@@ -295,7 +303,7 @@ namespace HeartRateMonitorVRC
             var servicesResult = await device.GetGattServicesForUuidAsync(heartRateServiceUuid);
             if (servicesResult.Status != GattCommunicationStatus.Success || servicesResult.Services.Count == 0)
             {
-                DisplayStatus("Failed getting HR service.");
+                DisplayStatus("Failed getting HR characteristics.");
                 return null;
             }
 
@@ -316,14 +324,22 @@ namespace HeartRateMonitorVRC
         {
             characteristic.ValueChanged += Characteristic_ValueChanged;
 
-            var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+            var status = GattCommunicationStatus.ProtocolError;
+            try
+            {
+                status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
                 GattClientCharacteristicConfigurationDescriptorValue.Notify);
 
-            if (status == GattCommunicationStatus.Success)
-            {
-                DisplayStatus("Subscribed to HR notifications.");
+                if (status == GattCommunicationStatus.Success)
+                {
+                    DisplayStatus("Subscribed to HR notifications.");
+                }
+                else
+                {
+                    DisplayStatus("Failed subscribing to HR notifications.");
+                }
             }
-            else
+            catch (Exception)
             {
                 DisplayStatus("Failed subscribing to HR notifications.");
             }
