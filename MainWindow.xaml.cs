@@ -47,7 +47,7 @@ namespace HeartRateMonitorVRC
             EmulateBeatEffect();
         }
 
-        private void DisplayStatus(string text)
+        public void DisplayStatus(string text)
         {
             Trace.WriteLine(text);
 
