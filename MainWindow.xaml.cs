@@ -21,10 +21,14 @@ namespace HeartRateMonitorVRC
             Out
         }
 
+        public static MainWindow Instance { private set; get; }
+
         private static DeviceInformation hrDeviceInfo;
         private static BluetoothLEDevice hrDevice;
         private static GattCharacteristic hrGatt;
         private static OSC osc;
+
+        private static bool isUsingPhoneApp = false;
 
         private static int lastSentBpm = 0;
         private static int currentBpm = 0;
@@ -33,6 +37,7 @@ namespace HeartRateMonitorVRC
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
 
             osc = new OSC();
@@ -82,7 +87,10 @@ namespace HeartRateMonitorVRC
 
         private bool ShouldEmulateBeatEffect()
         {
-            return osc != null && hrDevice != null && hrGatt != null;
+            if (isUsingPhoneApp)
+                return true;
+            else
+                return osc != null && hrDevice != null && hrGatt != null;
         }
 
         private async void ScanForDevicesAsync()
@@ -100,6 +108,11 @@ namespace HeartRateMonitorVRC
             var data = args.CharacteristicValue.ToArray();
             int heartRate = ParseHeartRate(data);
 
+            ReceiveHeartRateValue(heartRate);
+        }
+
+        public void ReceiveHeartRateValue(int heartRate)
+        {
             currentBpm = heartRate;
             BPMText.Dispatcher.Invoke(new Action(() =>
             {
@@ -137,7 +150,7 @@ namespace HeartRateMonitorVRC
             return heartRate;
         }
 
-        private void SendBPMToVRChat(int bpm)
+        public void SendBPMToVRChat(int bpm)
         {
             if (osc == null || bpm == lastSentBpm)
                 return;
@@ -382,6 +395,11 @@ namespace HeartRateMonitorVRC
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
+        }
+
+        public static void UsePhoneAppForBPM()
+        {
+            isUsingPhoneApp = true;
         }
     }
 }
