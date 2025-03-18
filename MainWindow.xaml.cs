@@ -174,6 +174,7 @@ namespace HeartRateMonitorVRC
             {
                 osc.Send("/avatar/parameters/onesHR", int.Parse(hrAsStr[1].ToString()));
                 osc.Send("/avatar/parameters/tensHR", int.Parse(hrAsStr[0].ToString()));
+                osc.Send("/avatar/parameters/hundredsHR", 0);
             }
 
             // Sending it all the time in case if avatar was changed and it should receive new data
