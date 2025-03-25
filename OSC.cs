@@ -83,7 +83,7 @@ namespace HeartRateMonitorVRC
         private void CreateListener()
         {
             routerListener = new UDPListener(routerListenerPort, ReceivePhoneAppOSC);
-            MainWindow.Instance.DisplayStatus("Using phone application.");
+            MainWindow.Instance.SetDisplayStatus("Using phone application.");
         }
 
         private void ReceivePhoneAppOSC(OscPacket packet)

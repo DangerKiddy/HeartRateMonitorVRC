@@ -33,6 +33,9 @@ namespace HeartRateMonitorVRC
         private static int lastSentBpm = 0;
         private static int currentBpm = 0;
 
+        private static int lowestBpm = int.MaxValue;
+        private static int highestBpm = 0;
+
         private static DeviceInformationCollection pairedDevices;
 
         public MainWindow()
@@ -47,7 +50,7 @@ namespace HeartRateMonitorVRC
             EmulateBeatEffect();
         }
 
-        public void DisplayStatus(string text)
+        public void SetDisplayStatus(string text)
         {
             Trace.WriteLine(text);
 
@@ -95,11 +98,11 @@ namespace HeartRateMonitorVRC
 
         private async void ScanForDevicesAsync()
         {
-            DisplayStatus("Scanning");
+            SetDisplayStatus("Scanning");
             var deviceSelector = BluetoothLEDevice.GetDeviceSelector();
             pairedDevices = await DeviceInformation.FindAllAsync(deviceSelector);
 
-            DisplayStatus("Scan complete, please select device");
+            SetDisplayStatus("Scan complete, please select device");
             SelectDeviceButton.IsEnabled = true;
         }
 
@@ -109,23 +112,6 @@ namespace HeartRateMonitorVRC
             int heartRate = ParseHeartRate(data);
 
             ReceiveHeartRateValue(heartRate);
-        }
-
-        public void ReceiveHeartRateValue(int heartRate)
-        {
-            currentBpm = heartRate;
-            BPMText.Dispatcher.Invoke(new Action(() =>
-            {
-                string zeros = "";
-                for (int i = 0; i < 3 - currentBpm.ToString().Length; i++)
-                {
-                    zeros += '0';
-                }
-
-                BPMText.Text = $"{zeros}{currentBpm}";
-            }));
-
-            SendBPMToVRChat(heartRate);
         }
 
         private int ParseHeartRate(byte[] data)
@@ -148,6 +134,30 @@ namespace HeartRateMonitorVRC
             }
 
             return heartRate;
+        }
+
+        public void ReceiveHeartRateValue(int heartRate)
+        {
+            currentBpm = heartRate;
+
+            SetLowestAndHighesetBPM();
+            SendBPMToVRChat(heartRate);
+
+            SetHeartRateUIValue(currentBpm, BPMText);
+            SetHeartRateUIValue(lowestBpm, BPMText_Lowest);
+            SetHeartRateUIValue(highestBpm, BPMText_Highest);
+        }
+
+        public void SetLowestAndHighesetBPM()
+        {
+            if (currentBpm == 0)
+                return;
+
+            if (currentBpm < lowestBpm)
+                lowestBpm = currentBpm;
+
+            if (currentBpm > highestBpm)
+                highestBpm = currentBpm;
         }
 
         public void SendBPMToVRChat(int bpm)
@@ -177,9 +187,26 @@ namespace HeartRateMonitorVRC
                 osc.Send("/avatar/parameters/hundredsHR", 0);
             }
 
+            osc.Send("/avatar/parameters/HeartrateLowest", Remap(lowestBpm, 0, 255, 0, 1));
+            osc.Send("/avatar/parameters/HeartrateHighest", Remap(highestBpm, 0, 255, 0, 1));
+
             // Sending it all the time in case if avatar was changed and it should receive new data
             osc.Send("/avatar/parameters/isHRConnected", true);
             osc.Send("/avatar/parameters/isHRActive", true);
+        }
+
+        public void SetHeartRateUIValue(int heartrate, TextBlock textBlock)
+        {
+            textBlock.Dispatcher.Invoke(new Action(() =>
+            {
+                string zeros = "";
+                for (int i = 0; i < 3 - heartrate.ToString().Length; i++)
+                {
+                    zeros += '0';
+                }
+
+                textBlock.Text = $"{zeros}{heartrate}";
+            }));
         }
 
         public static float Remap(float input, float inputStart, float inputEnd, float outputStart, float outputEnd)
@@ -266,13 +293,13 @@ namespace HeartRateMonitorVRC
             var device = await BluetoothLEDevice.FromIdAsync(deviceId);
             if (device == null)
             {
-                DisplayStatus("Failed connecting to device.");
+                SetDisplayStatus("Failed connecting to device.");
                 return null;
             }
 
             device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
 
-            DisplayStatus($"Attempting get HR characteristics of {device.Name}");
+            SetDisplayStatus($"Attempting get HR characteristics of {device.Name}");
             return device;
         }
 
@@ -280,7 +307,7 @@ namespace HeartRateMonitorVRC
         {
             if (sender.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
             {
-                DisplayStatus("Device disconnected. Reconnecting...");
+                SetDisplayStatus("Device disconnected. Reconnecting...");
 
                 BPMText.Dispatcher.Invoke(new Action(() =>
                 {
@@ -301,12 +328,12 @@ namespace HeartRateMonitorVRC
         {
             while (!await TryPairWithDevice(hrDeviceInfo, true))
             {
-                DisplayStatus("Reconnection failed!. Trying again...");
+                SetDisplayStatus("Reconnection failed!. Trying again...");
                 DisconnectDevice();
                 await Task.Delay(1000);
             }
 
-            DisplayStatus("Connection restored!");
+            SetDisplayStatus("Connection restored!");
         }
 
         private async Task<GattCharacteristic> GetHeartRateCharacteristicAsync(BluetoothLEDevice device, bool reconnecting = false)
@@ -317,7 +344,7 @@ namespace HeartRateMonitorVRC
             var servicesResult = await device.GetGattServicesForUuidAsync(heartRateServiceUuid);
             if (servicesResult.Status != GattCommunicationStatus.Success || servicesResult.Services.Count == 0)
             {
-                DisplayStatus("Failed getting HR characteristics.");
+                SetDisplayStatus("Failed getting HR characteristics.");
                 return null;
             }
 
@@ -326,7 +353,7 @@ namespace HeartRateMonitorVRC
             var characteristicsResult = await service.GetCharacteristicsForUuidAsync(heartRateMeasurementCharacteristicUuid);
             if (characteristicsResult.Status != GattCommunicationStatus.Success || characteristicsResult.Characteristics.Count == 0)
             {
-                DisplayStatus("Unable to get characteristics.");
+                SetDisplayStatus("Unable to get characteristics.");
 
                 return null;
             }
@@ -346,16 +373,16 @@ namespace HeartRateMonitorVRC
 
                 if (status == GattCommunicationStatus.Success)
                 {
-                    DisplayStatus("Subscribed to HR notifications.");
+                    SetDisplayStatus("Subscribed to HR notifications.");
                 }
                 else
                 {
-                    DisplayStatus("Failed subscribing to HR notifications.");
+                    SetDisplayStatus("Failed subscribing to HR notifications.");
                 }
             }
             catch (Exception)
             {
-                DisplayStatus("Failed subscribing to HR notifications.");
+                SetDisplayStatus("Failed subscribing to HR notifications.");
             }
 
             return status == GattCommunicationStatus.Success;
