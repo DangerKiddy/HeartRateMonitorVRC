@@ -7,11 +7,13 @@
         mc:Ignorable="d"
         MouseDown="Window_MouseDown"
         Title="HeartRateMonitor" Height="153" Width="365" ResizeMode="NoResize" WindowStyle="None">
-	<Grid Background="#FF2D2D2D">
+    <Grid Background="#FF2D2D2D">
 		<Button Content="Scan" IsEnabled="True" x:Name="ScanButton" Click="Retry_Click"  HorizontalAlignment="Right" Margin="0,88,57,0" VerticalAlignment="Top" Width="46" RenderTransformOrigin="0.144,-3.095" Opacity="1"/>
 		<TextBlock HorizontalAlignment="Center" x:Name="StatusText" TextWrapping="Wrap" Text="Current status" VerticalAlignment="Top" Width="344" Margin="0,127,0,0" Height="20" Foreground="White"/>
-		<TextBlock HorizontalAlignment="Left" x:Name="BPMText" Margin="10,30,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="80" Width="134" Foreground="White" FontSize="72" Opacity="1" FontFamily="Unispace" TextAlignment="Right"/>
-		<Button Content="Select device" IsEnabled="False" x:Name="SelectDeviceButton" Click="SelectDevice_Click" HorizontalAlignment="Left" Margin="238,46,0,0" VerticalAlignment="Top" Height="28" Width="102"/>
+
+        <TextBlock HorizontalAlignment="Left" x:Name="BPMText" Margin="10,30,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="80" Width="134" Foreground="White" FontSize="72" Opacity="1" Style="{StaticResource NumberFont}" TextAlignment="Right"/>
+		
+        <Button Content="Select device" IsEnabled="False" x:Name="SelectDeviceButton" Click="SelectDevice_Click" HorizontalAlignment="Left" Margin="238,46,0,0" VerticalAlignment="Top" Height="28" Width="102"/>
 		<TextBlock HorizontalAlignment="Left" x:Name="BPMText_Копировать" Margin="150,78,0,0" TextWrapping="Wrap" Text="BPM" VerticalAlignment="Top" Height="30" Width="56" Foreground="White" FontSize="24" Opacity="1" FontFamily="Franklin Gothic Medium"/>
 		<Image x:Name="HeartIcon" HorizontalAlignment="Left" Height="30" Margin="160,46,0,0" VerticalAlignment="Top" Width="30" Source="/heart.png"/>
 		<Label Content="HeartRateMonitorVRC" HorizontalAlignment="Left" Margin="26,3,0,0" VerticalAlignment="Top" Foreground="White"/>
@@ -129,9 +131,11 @@
 			</Button>
 		</Grid>
 		<Image HorizontalAlignment="Left" Height="25" Margin="4,4,0,0" VerticalAlignment="Top" Width="25" Source="/icon.png"/>
-		<TextBlock HorizontalAlignment="Left" x:Name="BPMText_Lowest" Margin="54,108,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="16" Width="36" Foreground="White" Opacity="1" FontFamily="Unispace"/>
+
+        <TextBlock HorizontalAlignment="Left" x:Name="BPMText_Lowest" Margin="54,108,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="16" Width="36" Foreground="White" Opacity="1" Style="{StaticResource NumberFont}"/>
 		<TextBlock HorizontalAlignment="Left" Margin="16,108,0,0" TextWrapping="Wrap" Text="Lowest" VerticalAlignment="Top" Height="13" Width="42" Foreground="White" Opacity="1" FontFamily="Franklin Gothic Medium" FontSize="11"/>
-		<TextBlock HorizontalAlignment="Left" x:Name="BPMText_Highest" Margin="119,108,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="16" Width="36" Foreground="White" Opacity="1" FontFamily="Unispace"/>
+
+        <TextBlock HorizontalAlignment="Left" x:Name="BPMText_Highest" Margin="119,108,0,0" TextWrapping="Wrap" Text="000" VerticalAlignment="Top" Height="16" Width="36" Foreground="White" Opacity="1" Style="{StaticResource NumberFont}"/>
 		<TextBlock HorizontalAlignment="Left" Margin="81,108,0,0" TextWrapping="Wrap" Text="Highest" VerticalAlignment="Top" Height="13" Width="42" Foreground="White" Opacity="1" FontFamily="Franklin Gothic Medium" FontSize="11"/>
 	</Grid>
 </Window>

@@ -4,8 +4,8 @@
              xmlns:local="clr-namespace:HeartRateMonitorVRC"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Style x:Key="Unispace Bold">
-            <Setter Property="TextElement.FontFamily" Value="#unispace" />
+        <Style x:Key="NumberFont">
+            <Setter Property="TextElement.FontFamily" Value="/Fonts/#Unispace"/>
         </Style>
     </Application.Resources>
 </Application>
