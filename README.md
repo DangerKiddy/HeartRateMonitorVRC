@@ -2,13 +2,15 @@
 ![e1af8ed2bd59eea3e71613963807320a](https://github.com/user-attachments/assets/7edd955b-0d67-40cf-9ad3-17d99960ae6b)\
 ![6c64df81b1fff43bbe6966cb85eb9ed0](https://github.com/user-attachments/assets/577995e1-a97d-467e-ba65-c2b7d6b1e7f7)
 
-Application for streaming heart rate info from pulseoximeter straight to VRChat without phone/web apps by using desktop Bluetooth and VRChat OSC
+An application for streaming heart rate data from a pulse oximeter directly to VRChat without the need for phone or web apps, using desktop Bluetooth and VRChat OSC. Alternatively, it can use the [helper phone app](https://github.com/DangerKiddy/AndroidHeartRateMonitorVRC) but still without web apps and completely free.
 
 ## Requirements
 - Pulseoximeter with BluetoothLE (Low energy) support, such as CooSpo H808S (Tested only with that device)
-- Bluetooth adapter on PC
-
-## Connecting
+- One of down below:
+  - Bluetooth adapter for PC/Built-in Bluetooth in motherboard of PC
+  - Or a phone with [this app](https://github.com/DangerKiddy/AndroidHeartRateMonitorVRC) and PC connected to the same internet
+  
+## Connecting via Bluetooth
 1. Open Bluetooth settings\
 ![image](https://github.com/user-attachments/assets/3b259898-fb43-4bc2-8c2b-a12200d68541)
 2. Press "Add Bluetooth or other device"\
@@ -28,9 +30,21 @@ For Windows 11 you must set Advanced bluetooth discovery\
 7. Wait until it says "Subscribed to HR notifications" and shows your BPM\
 ![image](https://github.com/user-attachments/assets/8e7f610d-4455-40b9-81c0-a023e755df69)
 
+## Connecting via phone app
+1. Connect your PC and phone to the same internet
+2. Launch the HeartRateMonitorVRC on your PC
+3. Launch HeartRateMonitorVRC on your phone
+4. Turn on your pulseoximeter and press "Scan" button in the phone app
+5. Wait for 10 seconds until it displays all Bluetooth devices nearby
+   - If you cannot see your device in the list press scan again until it shows. If it still not appeared then please refer to the [issues page](https://github.com/DangerKiddy/HeartRateMonitorVRC/issues) and create a new issue
+6. Select your pulseoximeter device and wait until your heart rate appears on PC application
+7. Done
+
 ## Troubleshooting
 ### Unable to get characteristics / Failed subcribing to HR notifications
 Happens if your device is occupied by another device (i.e. connected to another device). If you're reconnecting then simply wait a bit and try again
+### Heart rate isn't sending anymore when using phone app
+This issue happens when your phone blocks the screen/goes in sleep mode. This would be fixed in the future versions, but for now please find a way to keep your phone awake, such as enabling a 10 hour video
 
 ## Integrating with VRChat
 HeartRateMonitor sends OSC messages to VRChat port (9000) using parameters from [HRtoVRChat_OSC](https://github.com/200Tigersbloxed/HRtoVRChat_OSC/blob/main/AvatarSetup.md#supported-parameters) and [vrc-osc-miband-hrm](https://github.com/vard88508/vrc-osc-miband-hrm), but also includes some exclusive parameters
