@@ -1,6 +1,7 @@
 # HeartRateMonitorVRC
 ![e1af8ed2bd59eea3e71613963807320a](https://github.com/user-attachments/assets/7edd955b-0d67-40cf-9ad3-17d99960ae6b)\
-![6c64df81b1fff43bbe6966cb85eb9ed0](https://github.com/user-attachments/assets/577995e1-a97d-467e-ba65-c2b7d6b1e7f7)
+![6c64df81b1fff43bbe6966cb85eb9ed0](https://github.com/user-attachments/assets/577995e1-a97d-467e-ba65-c2b7d6b1e7f7)\
+(Those are two different gifs, that's why they are not synced)
 
 An application for streaming heart rate data from a pulse oximeter directly to VRChat without the need for phone or web apps, using desktop Bluetooth and VRChat OSC. Alternatively, it can use the [helper phone app](https://github.com/DangerKiddy/AndroidHeartRateMonitorVRC) but still without web apps and completely free.
 
