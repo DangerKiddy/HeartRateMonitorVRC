@@ -33,11 +33,7 @@ namespace HeartRateMonitorVRC
 
                 if (isBeat)
                 {
-                    var beatEffect = new DoubleAnimation();
-                    beatEffect.From = 1;
-                    beatEffect.To = .25f;
-                    beatEffect.Duration = TimeSpan.FromMilliseconds(millisecondsBeforeNextBeat);
-                    HeartIcon.BeginAnimation(OpacityProperty, beatEffect);
+                    BeatAnimation(millisecondsBeforeNextBeat);
                 }
             };
 
@@ -91,6 +87,15 @@ namespace HeartRateMonitorVRC
             {
                 StatusText.Text = text;
             }));
+        }
+
+        public void BeatAnimation(float duration)
+        {
+            var beatEffect = new DoubleAnimation();
+            beatEffect.From = 1;
+            beatEffect.To = .25f;
+            beatEffect.Duration = TimeSpan.FromMilliseconds(duration);
+            HeartIcon.BeginAnimation(OpacityProperty, beatEffect);
         }
 
         public void SetHeartRateUIValue(int heartrate, TextBlock textBlock)
