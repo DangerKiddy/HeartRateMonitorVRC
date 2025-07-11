@@ -38,18 +38,18 @@ namespace HeartRateMonitorVRC.Services
 
             ExplodeBPMToDigits(out int ones, out int tens, out int hundreds);
 
-            _processedHeartRate.BPM = _currentBpm;
-            _processedHeartRate.BPMRange01 = _currentBpm / 255f;
-            _processedHeartRate.BPMRange_MinusOne_One = Remap(_currentBpm, 0, 255, -1, 1);
+            _processedHeartRate.Bpm = _currentBpm;
+            _processedHeartRate.BpmRangeZeroToOne = _currentBpm / 255f;
+            _processedHeartRate.BpmRangeMinusOneToOne = Remap(_currentBpm, 0, 255, -1, 1);
             _processedHeartRate.Ones = ones;
             _processedHeartRate.Tens = tens;
             _processedHeartRate.Hundreds = hundreds;
 
-            _processedHeartRate.LowestBPM = _lowestBpm;
-            _processedHeartRate.LowestBPMRange01 = _lowestBpm / 255f;
+            _processedHeartRate.LowestBpm = _lowestBpm;
+            _processedHeartRate.LowestBpmRangeZeroToOne = _lowestBpm / 255f;
 
-            _processedHeartRate.HighestBPM = _highestBpm;
-            _processedHeartRate.HighestBPMRange01 = _highestBpm / 255f;
+            _processedHeartRate.HighestBpm = _highestBpm;
+            _processedHeartRate.HighestBpmRangeZeroToOne = _highestBpm / 255f;
 
             OnHeartRateProcessed?.Invoke(_processedHeartRate);
         }

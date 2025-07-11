@@ -2,17 +2,15 @@
 {
     internal struct ProcessedHeartRate
     {
-        public int BPM;
-        public float BPMRange01;
-        public float BPMRange_MinusOne_One;
+        public int Bpm;
+        public float BpmRangeZeroToOne;
+        public float BpmRangeMinusOneToOne;
         public int Ones;
         public int Tens;
         public int Hundreds;
-
-        public int LowestBPM;
-        public float LowestBPMRange01;
-
-        public int HighestBPM;
-        public float HighestBPMRange01;
+        public int LowestBpm;
+        public float LowestBpmRangeZeroToOne;
+        public int HighestBpm;
+        public float HighestBpmRangeZeroToOne;
     }
 }
