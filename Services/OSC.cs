@@ -73,7 +73,8 @@ namespace HeartRateMonitorVRC.Services
                 var endpoint = new IPEndPoint(incomingIp.Address, RouterPort);
                 var sender = new UDPSender(incomingIp.Address.ToString(), RouterPort);
 
-                var message = new OscMessage("/confirmAddress", dataAsString.Replace("/netLocalIpAddress,s", ""));
+                var content = dataAsString.Replace("/netLocalIpAddress,s", "");
+                var message = new OscMessage("/confirmAddress", content);
                 sender.Send(message);
                 sender.Close();
                 _shouldStopListening = true;
