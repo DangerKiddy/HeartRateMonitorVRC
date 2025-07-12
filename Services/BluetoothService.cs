@@ -112,7 +112,7 @@ namespace HeartRateMonitorVRC.Services
 
         private async Task<GattCharacteristic> GetHeartRateCharacteristicAsync(BluetoothLEDevice device, bool reconnecting = false)
         {
-            var servicesResult = await device.GetGattServicesForUuidAsync(HeartRateServiceUuid);
+            GattDeviceServicesResult servicesResult = await device.GetGattServicesForUuidAsync(HeartRateServiceUuid);
             if (servicesResult.Status != GattCommunicationStatus.Success || servicesResult.Services.Count == 0)
             {
                 OnStatusChanged?.Invoke("Failed getting HR characteristics.", BluetoothStatus.FailedGettingCharacteristics);

@@ -26,11 +26,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/Images/icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -73,7 +73,7 @@
     <Compile Include="Services\BluetoothStatus.cs" />
     <Compile Include="Services\HeartRateProcessor.cs" />
     <Compile Include="Services\ProcessedHeartRate.cs" />
-    <Compile Include="Services\VRChatService.cs" />
+    <Compile Include="Services\VrChatService.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,7 +106,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Fonts\Unispace.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -116,9 +115,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="heart.png" />
-    <Resource Include="icon.png" />
     <Content Include="SharpOSC.dll" />
+    <Resource Include="Resources\Fonts\Display.ttf" />
+    <Resource Include="Resources\Fonts\Unispace.ttf" />
+    <Resource Include="Resources\Images\heart.png" />
+    <Resource Include="Resources\Images\icon.ico" />
+    <Resource Include="Resources\Images\icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
