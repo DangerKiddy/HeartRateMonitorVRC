@@ -40,6 +40,7 @@ namespace HeartRateMonitorVRC.Services
             _processedHeartRate.Bpm = _currentBpm;
             _processedHeartRate.BpmRangeZeroToOne = _currentBpm / 255f;
             _processedHeartRate.BpmRangeMinusOneToOne = Remap(_currentBpm, 0, 255, -1, 1);
+            _processedHeartRate.BpmRangeLowestToHighest = Remap(_currentBpm, _lowestBpm, _highestBpm, 0, 1);
             _processedHeartRate.Ones = ones;
             _processedHeartRate.Tens = tens;
             _processedHeartRate.Hundreds = hundreds;
