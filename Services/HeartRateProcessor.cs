@@ -5,9 +5,9 @@ namespace HeartRateMonitorVRC.Services
 {
     internal class HeartRateProcessor
     {
-        private const int DEFAULT_NEXT_BEAT_DELAY = 100;
-        private const int ONE_MILLISECOND = 1000;
-        private const int ONE_SECOND = 60;
+        private const int DefaultNextBeatDelay = 100;
+        private const int OneMillisecond = 1000;
+        private const int OneSecond = 60;
 
         public delegate void BeatEmulationHandler(bool isBeat, float millisecondsBeforeNextBeat);
         public event BeatEmulationHandler OnHeartBeatEmulationUpdate;
@@ -15,12 +15,11 @@ namespace HeartRateMonitorVRC.Services
 
         private int _currentBpm = 120;
         private int _lowestBpm = int.MaxValue;
-        private int _highestBpm = 0;
+        private int _highestBpm;
 
         private ProcessedHeartRate _processedHeartRate;
-        public ProcessedHeartRate ProcessedHeartRate { get => _processedHeartRate; }
 
-        private bool _shouldEmulateBeatEffect = false;
+        private bool _shouldEmulateBeatEffect;
 
         public HeartRateProcessor()
         {
@@ -29,14 +28,14 @@ namespace HeartRateMonitorVRC.Services
             EmulateBeatEffect();
         }
 
-        public void UpdateBPM(int bpm)
+        public void UpdateBpm(int bpm)
         {
             _shouldEmulateBeatEffect = true;
 
             _currentBpm = bpm;
-            SetLowestAndHighesetBPM();
+            SetLowestAndHighestBpm();
 
-            ExplodeBPMToDigits(out int ones, out int tens, out int hundreds);
+            ExplodeBpmToDigits(out int ones, out int tens, out int hundreds);
 
             _processedHeartRate.Bpm = _currentBpm;
             _processedHeartRate.BpmRangeZeroToOne = _currentBpm / 255f;
@@ -54,7 +53,7 @@ namespace HeartRateMonitorVRC.Services
             OnHeartRateProcessed?.Invoke(_processedHeartRate);
         }
 
-        private void SetLowestAndHighesetBPM()
+        private void SetLowestAndHighestBpm()
         {
             if (_currentBpm == 0)
                 return;
@@ -66,9 +65,9 @@ namespace HeartRateMonitorVRC.Services
                 _highestBpm = _currentBpm;
         }
 
-        private void ExplodeBPMToDigits(out int ones, out int tens, out int hundreds)
+        private void ExplodeBpmToDigits(out int ones, out int tens, out int hundreds)
         {
-            string hrAsStr = _currentBpm.ToString();
+            var hrAsStr = _currentBpm.ToString();
 
             ones = 0;
             tens = 0;
@@ -87,23 +86,23 @@ namespace HeartRateMonitorVRC.Services
             }
         }
 
-        private float Remap(float input, float inputStart, float inputEnd, float outputStart, float outputEnd)
+        private static float Remap(float input, float inputStart, float inputEnd, float outputStart, float outputEnd)
         {
-            return outputStart + ((outputEnd - outputStart) / (inputEnd - inputStart)) * (input - inputStart);
+            return outputStart + (outputEnd - outputStart) / (inputEnd - inputStart) * (input - inputStart);
         }
 
         private async void EmulateBeatEffect()
         {
             while (true)
             {
-                var nextBeat = _currentBpm == 0 ? DEFAULT_NEXT_BEAT_DELAY : (int)((1f / _currentBpm) * ONE_MILLISECOND) * ONE_SECOND;
+                int nextBeat = _currentBpm == 0 ? DefaultNextBeatDelay : (int)(1f / _currentBpm * OneMillisecond) * OneSecond;
 
                 if (_shouldEmulateBeatEffect)
                 {
                     OnHeartBeatEmulationUpdate?.Invoke(true, nextBeat);
 
-                    var beatOtherPart = nextBeat / 3;
-                    nextBeat = nextBeat - beatOtherPart;
+                    int beatOtherPart = nextBeat / 3;
+                    nextBeat -= beatOtherPart;
 
                     await Task.Delay(beatOtherPart);
 

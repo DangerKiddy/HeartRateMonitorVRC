@@ -84,7 +84,7 @@ namespace HeartRateMonitorVRC
 
         public void ReceiveHeartRateValue(int bpm)
         {
-            _heartRateProcessor.UpdateBPM(bpm);
+            _heartRateProcessor.UpdateBpm(bpm);
         }
 
         public void SetDisplayStatus(string text)
