@@ -14,6 +14,7 @@
             _osc.Send("/avatar/parameters/Heartrate2", heartRate.BpmRangeZeroToOne);
             _osc.Send("/avatar/parameters/HRPercent", heartRate.BpmRangeZeroToOne);
             _osc.Send("/avatar/parameters/FullHRPercent", heartRate.BpmRangeMinusOneToOne);
+            _osc.Send("/avatar/parameters/RangePercent", heartRate.BpmRangeLowestToHighest);
             _osc.Send("/avatar/parameters/HR", heartRate.Bpm);
 
             _osc.Send("/avatar/parameters/onesHR", heartRate.Ones);

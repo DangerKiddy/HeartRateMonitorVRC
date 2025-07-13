@@ -50,18 +50,19 @@ This issue happens when your phone blocks the screen/goes in sleep mode. This wo
 ## Integrating with VRChat
 HeartRateMonitor sends OSC messages to VRChat port (9000) using parameters from [HRtoVRChat_OSC](https://github.com/200Tigersbloxed/HRtoVRChat_OSC/blob/main/AvatarSetup.md#supported-parameters) and [vrc-osc-miband-hrm](https://github.com/vard88508/vrc-osc-miband-hrm), but also includes some exclusive parameters
 ### Used parameters
-| Address | Type | Range | Description | Is Exclusive |
-| ------- | ---- | ----- | ----------- | ------------ |
-| /avatar/parameters/onesHR | int | `0`-`9` | Ones spot in the Heart Rate reading | &cross; |
-| /avatar/parameters/tensHR | int | `0`-`9` | Tens spot in the Heart Rate reading | &cross; |
-| /avatar/parameters/hundredsHR | int | `0`-`9` | Hundreds spot in the Heart Rate reading | &cross; |
-| /avatar/parameters/isHRBeat | bool | `True`/`False` | Estimation on when the heart is beating | &cross; |
-| /avatar/parameters/HRPercent | float | `0`-`1` | Converted range of HR | &cross; |
-| /avatar/parameters/FullHRPercent | float | `-1`-`1` | Other converted range of HR | &cross; |
-| /avatar/parameters/HR | int | `0`-`255` | Exact HR value | &cross; |
-| /avatar/parameters/Heartrate2  | float | `0`-`1` | Converted range of HR | &cross; |
-| /avatar/parameters/HeartrateLowest  | float | `0`-`1` | Converted range of Lowest HR for the whole session | &check; |
-| /avatar/parameters/HeartrateHighest  | float | `0`-`1` | Converted range of Highest HR for the whole session | &check; |
+| Address | Type  | Range          | Description                                         | Is Exclusive |
+| ------- |-------|----------------|-----------------------------------------------------| ----------- |
+| /avatar/parameters/onesHR | int   | `0`-`9`        | Ones spot in the Heart Rate reading                 | &cross; |
+| /avatar/parameters/tensHR | int   | `0`-`9`        | Tens spot in the Heart Rate reading                 | &cross; |
+| /avatar/parameters/hundredsHR | int   | `0`-`9`        | Hundreds spot in the Heart Rate reading             | &cross; |
+| /avatar/parameters/isHRBeat | bool  | `True`/`False` | Estimation on when the heart is beating             | &cross; |
+| /avatar/parameters/HRPercent | float | `0`-`1`        | Converted range of HR                               | &cross; |
+| /avatar/parameters/FullHRPercent | float | `-1`-`1`       | Other converted range of HR                         | &cross; |
+| /avatar/parameters/HR | int   | `0`-`255`      | Exact HR value                                      | &cross; |
+| /avatar/parameters/Heartrate2  | float | `0`-`1`        | Converted range of HR                               | &cross; |
+|/avatar/parameters/RangePercent| float | `0`-`1`            | Range from lowest to highest calculated heart rate  |&cross;| 
+| /avatar/parameters/HeartrateLowest  | float | `0`-`1`        | Converted range of Lowest HR for the whole session  | &check; |
+| /avatar/parameters/HeartrateHighest  | float | `0`-`1`        | Converted range of Highest HR for the whole session | &check; |
 
 ## Building
 To build the project you need to manually include Windows.winmd and System.Runtime.WindowsRuntime.dll in the project, which may be located here:

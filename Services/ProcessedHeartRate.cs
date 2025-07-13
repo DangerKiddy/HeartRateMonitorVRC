@@ -5,6 +5,7 @@
         public int Bpm;
         public float BpmRangeZeroToOne;
         public float BpmRangeMinusOneToOne;
+        public float BpmRangeLowestToHighest;
         public int Ones;
         public int Tens;
         public int Hundreds;
