@@ -41,8 +41,8 @@
 					           Foreground="White"
 					           VerticalAlignment="Center"
 					           HorizontalAlignment="Right"
-					           FontSize="72"
-					           FontFamily="/Resources/Fonts/#Digital Display" />
+					           FontSize="64"
+					           FontFamily="/Resources/Fonts/#Unispace Bold" />
 					<Image Grid.Row="0" Grid.Column="1"
 					       VerticalAlignment="Bottom"
 					       x:Name="HeartIcon"
@@ -76,7 +76,7 @@
 					           Margin="5 0 0 0"
 					           Foreground="White"
 					           VerticalAlignment="Center"
-					           FontFamily="/Resources/Fonts/#Digital Display" />
+					           FontFamily="/Resources/Fonts/#Unispace Bold" />
 
 					<TextBlock Grid.Column="4" Text="Highest"
 					           Foreground="White"
@@ -86,7 +86,7 @@
 					           Margin="5 0 0 0"
 					           Foreground="White"
 					           VerticalAlignment="Center"
-					           FontFamily="/Resources/Fonts/#Digital Display" />
+					           FontFamily="/Resources/Fonts/#Unispace Bold" />
 				</Grid>
 
 			</Grid>

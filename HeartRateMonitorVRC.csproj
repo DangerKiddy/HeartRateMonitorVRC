@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -115,8 +115,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SharpOSC.dll" />
-    <Resource Include="Resources\Fonts\Display.ttf" />
     <Resource Include="Resources\Fonts\Unispace.ttf" />
     <Resource Include="Resources\Images\heart.png" />
     <Resource Include="Resources\Images\icon.ico" />
